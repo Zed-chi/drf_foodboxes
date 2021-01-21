@@ -1,7 +1,7 @@
-from django.db import models
 from django.conf.global_settings import MEDIA_ROOT
+from django.db import models
 
-# Create your models here.
+
 class Item(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
