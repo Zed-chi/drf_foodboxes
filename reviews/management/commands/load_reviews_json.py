@@ -1,11 +1,11 @@
 import json
-from io import BytesIO
+from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 
-from items.models import Item
-
 import requests
+
+from reviews.models import Review
 
 
 class Command(BaseCommand):
@@ -20,23 +20,25 @@ class Command(BaseCommand):
         response.raise_for_status()
         return response
 
-    def get_items_from_file(self, path):
+    def get_reviews_from_file(self, path):
         with open(path, "r", encoding="utf-8") as file:
             return json.loads(file.read())
 
     def fill_db_from(self, items):
         for item in items:
             try:
-                new_item, _ = Item.objects.get_or_create(
-                    title=item["title"],
-                    description=item["description"],
-                    weight=item["weight_grams"],
-                    price=item["price"],
+                new_review, _ = Review.objects.get_or_create(
+                    author=item["author"],
+                    text=item["text"],
+                    created_at=datetime.strptime(
+                        item["created_at"], "%y-%d-%m"
+                    ),
+                    published_at=datetime.strptime(
+                        item["published_at"], "%y-%d-%m"
+                    ),
+                    status=item["status"],
                 )
-                image_content = requests.get(item["image"]).content
-                new_item.image.save(
-                    item["title"], BytesIO(image_content), save=True
-                )
+                new_review.save()
             except Exception as e:
                 self.stdout.write(self.style.NOTICE(e))
 
@@ -45,10 +47,10 @@ class Command(BaseCommand):
             if "url" not in options and "path" not in options:
                 raise CommandError("Empty arguments")
             if "url" in options:
-                items = self.load_resource_from(options["url"]).json()
+                reviews = self.load_resource_from(options["url"]).json()
             else:
-                items = self.get_items_from_file(options["path"])
-            self.fill_db_from(items)
+                reviews = self.get_reviews_from_file(options["path"])
+            self.fill_db_from(reviews)
         except BaseException as e:
             self.stdout.write(self.style.NOTICE(e))
             raise CommandError(e)
