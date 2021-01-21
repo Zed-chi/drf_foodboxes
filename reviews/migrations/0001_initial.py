@@ -7,18 +7,37 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Review',
+            name="Review",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('published_at', models.DateTimeField(auto_now_add=True)),
-                ('status', models.CharField(choices=[('I', 'Init'), ('M', 'On moderation'), ('P', 'Published'), ('R', 'Rejected')], default='I', max_length=20)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("published_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("I", "Init"),
+                            ("M", "On moderation"),
+                            ("P", "Published"),
+                            ("R", "Rejected"),
+                        ],
+                        default="I",
+                        max_length=20,
+                    ),
+                ),
             ],
         ),
     ]
