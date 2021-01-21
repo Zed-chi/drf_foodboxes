@@ -12,8 +12,8 @@ class Command(BaseCommand):
     help = "Loads json and makes DB entities of Review model"
 
     def add_arguments(self, parser):
-        parser.add_argument("url")
-        parser.add_argument("path")
+        parser.add_argument("--url", required=False)
+        parser.add_argument("--path", required=False)
 
     def load_resource_from(self, url):
         response = requests.get(url)
@@ -25,7 +25,8 @@ class Command(BaseCommand):
             return json.loads(file.read())
 
     def fill_db_from(self, items):
-        for item in items:
+        for id, item in enumerate(items):
+            self.stdout.write(self.style.NOTICE(f"processing {id+1} of {len(items)}"))
             try:
                 new_user, _ = User.objects.get_or_create(
                     password=item["password"],
